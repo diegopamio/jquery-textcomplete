@@ -186,7 +186,7 @@ if (typeof rangy === 'undefined') {
     // Invoke textcomplete.
     trigger: function (text, skipUnchangedTerm) {
       if (!this.dropdown) { this.initialize(); }
-      text != null || (text = this.adapter.getTextFromHeadToCaret());
+      text != null || (text = this.adapter.getContentFromHeadToCaret());
       var searchQuery = this._extractSearchQuery(text);
       if (searchQuery.length) {
         var term = searchQuery[1];
@@ -815,7 +815,7 @@ if (typeof rangy === 'undefined') {
 
     _onKeyup: function (e) {
       if (this._skipSearch(e)) { return; }
-      this.completer.trigger(this.getTextFromHeadToCaret(), true);
+      this.completer.trigger(this.getContentFromHeadToCaret(), true);
     },
 
     // Suppress searching if it returns true.
@@ -868,7 +868,7 @@ if (typeof rangy === 'undefined') {
 
     // Update the textarea with the given value and strategy.
     select: function (value, strategy) {
-      var pre = this.getTextFromHeadToCaret();
+      var pre = this.getContentFromHeadToCaret();
       var post = this.el.value.substring(this.el.selectionEnd);
       var newSubstr = strategy.replace(value);
       if ($.isArray(newSubstr)) {
@@ -893,7 +893,7 @@ if (typeof rangy === 'undefined') {
     // Consequently, the span element's position is the thing what we want.
     _getCaretRelativePosition: function () {
       var dummyDiv = $('<div></div>').css(this._copyCss())
-        .text(this.getTextFromHeadToCaret());
+        .text(this.getContentFromHeadToCaret());
       var span = $('<span></span>').text('.').appendTo(dummyDiv);
       this.$el.before(dummyDiv);
       var position = span.position();
@@ -928,7 +928,7 @@ if (typeof rangy === 'undefined') {
       }
     })($),
 
-    getTextFromHeadToCaret: function () {
+    getContentFromHeadToCaret: function () {
       return this.el.value.substring(0, this.el.selectionEnd);
     }
   });
@@ -955,7 +955,7 @@ if (typeof rangy === 'undefined') {
     // --------------
 
     select: function (value, strategy) {
-      var pre = this.getTextFromHeadToCaret();
+      var pre = this.getContentFromHeadToCaret();
       var post = this.el.value.substring(pre.length);
       var newSubstr = strategy.replace(value);
       if ($.isArray(newSubstr)) {
@@ -972,7 +972,7 @@ if (typeof rangy === 'undefined') {
       range.select();
     },
 
-    getTextFromHeadToCaret: function () {
+    getContentFromHeadToCaret: function () {
       this.el.focus();
       var range = document.selection.createRange();
       range.moveStart('character', -this.el.value.length);
@@ -1006,27 +1006,47 @@ if (typeof rangy === 'undefined') {
     // Update the content with the given value and strategy.
     // When an dropdown item is selected, it is executed.
     select: function (value, strategy) {
-      var pre = this.getTextFromHeadToCaret();
+      var pre = this.getContentFromHeadToCaret();
       var sel = window.getSelection()
       var range = sel.getRangeAt(0);
       var selection = range.cloneRange();
       selection.selectNodeContents(range.startContainer);
-      var content = selection.toString();
-      var post = content.substring(range.startOffset);
+      var post = this.getContentFromCaretEnd();
       var newSubstr = strategy.replace(value);
-      if ($.isArray(newSubstr)) {
+      var outputIsArray = $.isArray(newSubstr);
+        if (outputIsArray) {
         post = newSubstr[1] + post;
         newSubstr = newSubstr[0];
       }
       pre = pre.replace(strategy.match, newSubstr);
       range.selectNodeContents(range.startContainer);
       range.deleteContents();
-      var node = document.createTextNode(pre + post);
-      range.insertNode(node);
-      range.setStart(node, pre.length);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
+
+      if (outputIsArray){
+        var post_el = document.createElement("div");
+        post_el.innerHTML = post;
+        var post_html_node = document.createDocumentFragment();
+        while ( (node = post_el.firstChild) ) {
+            lastNode = post_html_node.appendChild(node);
+        }
+        range.insertNode(post_html_node);
+      }
+
+      var pre_el = document.createElement("div");
+      pre_el.innerHTML = pre;
+      var pre_html_node = document.createDocumentFragment(), node, lastNode;
+      while ( (node = pre_el.firstChild) ) {
+        lastNode = pre_html_node.appendChild(node);
+      }
+      range.insertNode(pre_html_node);
+
+      if (lastNode) {
+        range = range.cloneRange();
+        range.setStartAfter(lastNode);
+        range.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
     },
 
     // Private methods
@@ -1063,12 +1083,12 @@ if (typeof rangy === 'undefined') {
     // Example
     //
     //   // Suppose the html is '<b>hello</b> wor|ld' and | is the caret.
-    //   this.getTextFromHeadToCaret()
+    //   this.getContentFromHeadToCaret()
     //   // If the "useInnerHTML option is on:
     //   // => '<b>hello</b> wor'
     //   // else
-    //   // => ' wor'  // not '<b>hello</b> wor'
-    getTextFromHeadToCaret: function () {
+    //   // => ' wor'
+    getContentFromHeadToCaret: function () {
       var range = window.getSelection().getRangeAt(0),
           selection;
         if (this.option.useInnerHTML) {
@@ -1084,7 +1104,36 @@ if (typeof rangy === 'undefined') {
           selection.selectNodeContents(range.startContainer);
           return selection.toString().substring(0, range.startOffset);
         }
+    },
+    // Returns the string between the caret and the last character.
+    // Completer will be triggered with the result for start autocompleting.
+    //
+    // Example
+    //
+    //   // Suppose the html is '<span><b>hello</b> wor|ld</span>' and | is the caret.
+    //   this.getContentFromCaretEnd()
+    //   // If the "useInnerHTML option is on:
+    //   // => 'ld</span>'
+    //   // else
+    //   // => 'la'
+    getContentFromCaretEnd: function () {
+      var range = window.getSelection().getRangeAt(0),
+          selection;
+      if (this.option.useInnerHTML) {
+          selection = rangy.getSelection();
+          if (selection.rangeCount) {
+              selection.getRangeAt(0).insertNode($("<caret />")[0]);
+          }
+          var innerHTML = this.el.innerHTML;
+          $("caret").remove();
+          return innerHTML.substr(innerHTML.indexOf('<caret>'), innerHTML.length);
+      } else {
+          selection = range.cloneRange();
+          selection.selectNodeContents(range.startContainer);
+          return selection.toString().substring(0, range.startOffset);
+      }
     }
+
   });
 
   $.fn.textcomplete.ContentEditable = ContentEditable;

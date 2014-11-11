@@ -17,7 +17,7 @@
     // --------------
 
     select: function (value, strategy) {
-      var pre = this.getTextFromHeadToCaret();
+      var pre = this.getContentFromHeadToCaret();
       var post = this.el.value.substring(pre.length);
       var newSubstr = strategy.replace(value);
       if ($.isArray(newSubstr)) {
@@ -34,7 +34,7 @@
       range.select();
     },
 
-    getTextFromHeadToCaret: function () {
+    getContentFromHeadToCaret: function () {
       this.el.focus();
       var range = document.selection.createRange();
       range.moveStart('character', -this.el.value.length);
