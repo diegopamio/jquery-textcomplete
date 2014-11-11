@@ -107,20 +107,21 @@ var replaceFunc = function (value) {
 };
 ```
 
-The `option` is an optional Object which MAY have `appendTo`, `height` , `maxCount`, `placement`, `header`, `footer`, `zIndex` and `debounce`. If `appendTo` is given, the element of dropdown is appended into the specified element. If `height` is given, the dropdown element's height will be fixed.
+The `option` is an optional Object which MAY have `appendTo`, `height` , `maxCount`, `placement`, `useInnerHTML`, `header`, `footer`, `zIndex` and `debounce`. If `appendTo` is given, the element of dropdown is appended into the specified element. If `height` is given, the dropdown element's height will be fixed.
 
 ```js
 var option = {
-  appendTo:  appendToElement, // $('body')
-  height:    heightNumber,    // undefined
-  maxCount:  maxCountNumber,  // 10
-  placement: placementStr,    // ''
-  header:    headerStrOrFunc, // undefined
-  footer:    footerStrOrFunc, // undefined
-  zIndex:    zIndexStr,       // '100'
-  debounce:  debounceNumber,  // undefined
-  adapter:   adapterClass,    // undefined
-  className: classNameStr     // ''
+  appendTo:     appendToElement, // $('body')
+  height:       heightNumber,    // undefined
+  maxCount:     maxCountNumber,  // 10
+  placement:    placementStr,    // ''
+  header:       headerStrOrFunc, // undefined
+  footer:       footerStrOrFunc, // undefined
+  zIndex:       zIndexStr,       // '100'
+  debounce:     debounceNumber,  // undefined
+  adapter:      adapterClass,    // undefined
+  className:    classNameStr,    // ''
+  useInnerHTML: boolean          // undefined 
 };
 ```
 
@@ -129,6 +130,8 @@ The `maxCountNumber` MUST be a Number and default to 10. Even if `searchFunc` ca
 If `placementStr` includes 'top', it positions the drop-down to above the caret. If `placementStr` includes 'absleft' and 'absright', it positions the drop-down absolutely to the very left and right respectively. You can mix them.
 
 You can override the z-index property and the class attribute of dropdown element using `zIndex` and `className` option respectively.
+
+If useInnerHTML is true, then when using a content editable div, the matching will be executed over the full HTML instead of the shown text.
 
 Textcomplete debounces `debounceNumber` milliseconds, so `searchFunc` is not called until user stops typing.
 

@@ -90,3 +90,7 @@ or normalize the term with `context`:
 ```js
 context: function (text) { return text.toLowerCase(); },
 ```
+
+### I want to match using the innerHTML of a content editable
+
+You can do it by using the option

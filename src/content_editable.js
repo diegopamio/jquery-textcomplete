@@ -78,12 +78,26 @@
     //
     //   // Suppose the html is '<b>hello</b> wor|ld' and | is the caret.
     //   this.getTextFromHeadToCaret()
+    //   // If the "useInnerHTML option is on:
+    //   // => '<b>hello</b> wor'
+    //   // else
     //   // => ' wor'  // not '<b>hello</b> wor'
     getTextFromHeadToCaret: function () {
-      var range = window.getSelection().getRangeAt(0);
-      var selection = range.cloneRange();
-      selection.selectNodeContents(range.startContainer);
-      return selection.toString().substring(0, range.startOffset);
+      var range = window.getSelection().getRangeAt(0),
+          selection;
+        if (this.option.useInnerHTML) {
+          selection = rangy.getSelection();
+          if (selection.rangeCount) {
+            selection.getRangeAt(0).insertNode($("<caret />")[0]);
+          }
+          var innerHTML = this.el.innerHTML;
+          $("caret").remove();
+          return innerHTML.substr(0, innerHTML.indexOf('<caret>'));
+        } else {
+          selection = range.cloneRange();
+          selection.selectNodeContents(range.startContainer);
+          return selection.toString().substring(0, range.startOffset);
+        }
     }
   });
 

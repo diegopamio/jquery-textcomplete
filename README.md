@@ -32,6 +32,7 @@ Dependencies
 ------------
 
 - jQuery (>= 1.7.0) OR Zepto (>= 1.0)
+- rangy (git@github.com:diegopamio/rangy.git)
 
 Documents
 ---------

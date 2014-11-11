@@ -10,6 +10,10 @@ if (typeof jQuery === 'undefined') {
   throw new Error('jQuery.textcomplete requires jQuery');
 }
 
+if (typeof rangy === 'undefined') {
+  throw new Error('jQuery.textcomplete requires rangy-official');
+}
+
 +function ($) {
   'use strict';
 
