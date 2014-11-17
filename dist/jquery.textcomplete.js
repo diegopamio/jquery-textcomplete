@@ -815,7 +815,7 @@ if (typeof rangy === 'undefined') {
 
     _onKeyup: function (e) {
       if (this._skipSearch(e)) { return; }
-      this.completer.trigger(this.getContentFromHeadToCaret(), true);
+      this.completer.trigger(this.getContentFromHeadToCaret(true), true);
     },
 
     // Suppress searching if it returns true.
@@ -1088,10 +1088,10 @@ if (typeof rangy === 'undefined') {
     //   // => '<b>hello</b> wor'
     //   // else
     //   // => ' wor'
-    getContentFromHeadToCaret: function () {
+    getContentFromHeadToCaret: function (onlyText) {
       var range = window.getSelection().getRangeAt(0),
           selection;
-        if (this.option.useInnerHTML) {
+        if (this.option.useInnerHTML && !onlyText) {
           selection = rangy.getSelection();
           if (selection.rangeCount) {
             selection.getRangeAt(0).insertNode($("<caret />")[0]);
@@ -1116,10 +1116,10 @@ if (typeof rangy === 'undefined') {
     //   // => 'ld</span>'
     //   // else
     //   // => 'la'
-    getContentFromCaretEnd: function () {
+    getContentFromCaretEnd: function (onlyText) {
       var range = window.getSelection().getRangeAt(0),
           selection;
-      if (this.option.useInnerHTML) {
+      if (this.option.useInnerHTML && !onlyText) {
           selection = rangy.getSelection();
           if (selection.rangeCount) {
               selection.getRangeAt(0).insertNode($("<caret />")[0]);
