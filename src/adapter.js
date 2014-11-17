@@ -100,7 +100,7 @@
 
     _onKeyup: function (e) {
       if (this._skipSearch(e)) { return; }
-      this.completer.trigger(this.getContentFromHeadToCaret(), true);
+      this.completer.trigger(this.getContentFromHeadToCaret(true), true);
     },
 
     // Suppress searching if it returns true.

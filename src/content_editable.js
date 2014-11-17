@@ -102,10 +102,10 @@
     //   // => '<b>hello</b> wor'
     //   // else
     //   // => ' wor'
-    getContentFromHeadToCaret: function () {
+    getContentFromHeadToCaret: function (onlyText) {
       var range = window.getSelection().getRangeAt(0),
           selection;
-        if (this.option.useInnerHTML) {
+        if (this.option.useInnerHTML && !onlyText) {
           selection = rangy.getSelection();
           if (selection.rangeCount) {
             selection.getRangeAt(0).insertNode($("<caret />")[0]);
@@ -130,10 +130,10 @@
     //   // => 'ld</span>'
     //   // else
     //   // => 'la'
-    getContentFromCaretEnd: function () {
+    getContentFromCaretEnd: function (onlyText) {
       var range = window.getSelection().getRangeAt(0),
           selection;
-      if (this.option.useInnerHTML) {
+      if (this.option.useInnerHTML && !onlyText) {
           selection = rangy.getSelection();
           if (selection.rangeCount) {
               selection.getRangeAt(0).insertNode($("<caret />")[0]);
