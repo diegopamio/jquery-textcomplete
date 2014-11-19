@@ -101,6 +101,8 @@
     _onKeyup: function (e) {
       if (this._skipSearch(e)) { return; }
       this.completer.trigger(this.getContentFromHeadToCaret(true), true);
+      $(document.activeElement).find("span:empty").remove();
+      $(document.activeElement).find("br").remove();
     },
 
     // Suppress searching if it returns true.

@@ -140,7 +140,7 @@
           }
           var innerHTML = this.el.innerHTML;
           $("caret").remove();
-          return innerHTML.substr(innerHTML.indexOf('<caret>'), innerHTML.length);
+            return innerHTML.substr(innerHTML.indexOf('<caret>') + 15, innerHTML.length);
       } else {
           selection = range.cloneRange();
           selection.selectNodeContents(range.startContainer);

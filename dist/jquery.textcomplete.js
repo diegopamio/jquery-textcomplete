@@ -816,6 +816,8 @@ if (typeof rangy === 'undefined') {
     _onKeyup: function (e) {
       if (this._skipSearch(e)) { return; }
       this.completer.trigger(this.getContentFromHeadToCaret(true), true);
+      $(document.activeElement).find("span:empty").remove();
+      $(document.activeElement).find("br").remove();
     },
 
     // Suppress searching if it returns true.
@@ -1126,7 +1128,7 @@ if (typeof rangy === 'undefined') {
           }
           var innerHTML = this.el.innerHTML;
           $("caret").remove();
-          return innerHTML.substr(innerHTML.indexOf('<caret>'), innerHTML.length);
+            return innerHTML.substr(innerHTML.indexOf('<caret>') + 15, innerHTML.length);
       } else {
           selection = range.cloneRange();
           selection.selectNodeContents(range.startContainer);
