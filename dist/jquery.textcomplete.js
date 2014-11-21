@@ -815,7 +815,7 @@ if (typeof rangy === 'undefined') {
 
     _onKeyup: function (e) {
       if (this._skipSearch(e)) { return; }
-      this.completer.trigger(this.getContentFromHeadToCaret(true), true);
+      this.completer.trigger(this.getContentFromHeadToCaret(), true);
       $(document.activeElement).find("span:empty").remove();
       $(document.activeElement).find("br").remove();
     },
